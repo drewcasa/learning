@@ -199,6 +199,33 @@ namespace Learning
         }
 
         [TestMethod]
+        public void PerfectSquareSums_1()
+        {
+            var sq = new PerfectSquares();
+            var parts = sq.NumSquares(1);
+
+            Assert.AreEqual(1, parts);
+        }
+
+        [TestMethod]
+        public void PerfectSquareSums_7()
+        {
+            var sq = new PerfectSquares();
+            var parts = sq.NumSquares(7);
+
+            Assert.AreEqual(4, parts);
+        }
+
+        [TestMethod]
+        public void PerfectSquareSums_121()
+        {
+            var sq = new PerfectSquares();
+            var parts = sq.NumSquares(121);
+
+            Assert.AreEqual(1, parts);
+        }
+
+        [TestMethod]
         public void PerfectSquareSums_12()
         {
             var sq = new PerfectSquares();
@@ -257,10 +284,57 @@ namespace Learning
                 "2072", "7090", "9275", "8715", "1303", "4864", "1116", "6102", "2818", "9196", "1222", "3481", "1709", "6145", "2349",
             "3395", "5314", "3404", "4626", "3770", "7762", "8413", "7310", "9659", "0892", "9920",
                 "7195", "7049", "7443", "5505", "3400", "2275", "0669", "6024" };
-            
+
             var moves = locker.OpenLock(deadEnds, "4894");
 
             Assert.AreEqual(11, moves);
+        }
+
+        [TestMethod]
+        public void MyQueueTests()
+        {
+            var q = new MyCircularQueue(3);
+
+            Assert.AreEqual(true, q.EnQueue(1));
+            Assert.AreEqual(true, q.EnQueue(2));
+            Assert.AreEqual(true, q.EnQueue(3));
+            Assert.AreEqual(false, q.EnQueue(4));
+
+            Assert.AreEqual(3, q.Rear());
+            Assert.IsTrue(q.IsFull());
+            Assert.IsTrue(q.DeQueue());
+            Assert.IsTrue(q.EnQueue(4));
+            Assert.AreEqual(4, q.Rear());
+        }
+
+        [TestMethod]
+        public void StackTest()
+        {
+            var stack = new MinStack();
+
+            stack.Push(4);
+            Assert.AreEqual(4, stack.GetMin());
+            Assert.AreEqual(4, stack.Top());
+            stack.Push(2);
+            Assert.AreEqual(2, stack.GetMin());
+            stack.Pop();
+            Assert.AreEqual(4, stack.GetMin());
+            Assert.AreEqual(4, stack.Top());
+        }
+
+        [TestMethod]
+        public void BracketParserTests()
+        {
+            var parser = new BracketParser();
+
+            Assert.IsTrue(parser.IsValid("()"));
+            Assert.IsTrue(parser.IsValid("()[]{}"));
+            Assert.IsTrue(parser.IsValid("((([])))"));
+            Assert.IsTrue(parser.IsValid(""));
+
+            Assert.IsFalse(parser.IsValid("{"));
+            Assert.IsFalse(parser.IsValid("{}}"));
+            Assert.IsFalse(parser.IsValid("({)}"));
         }
 
         public char[,] GetGrid(string[] strings)
