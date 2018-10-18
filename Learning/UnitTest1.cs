@@ -1,3 +1,4 @@
+using Learning.QueuesAndStacks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -336,6 +337,68 @@ namespace Learning
             Assert.IsFalse(parser.IsValid("{}}"));
             Assert.IsFalse(parser.IsValid("({)}"));
         }
+
+        [TestMethod]
+        public void DailyTempsTests()
+        {
+            var temps = new Solution();
+            var input = new int[] { 73, 74, 75, 71, 69, 72, 76, 73 };
+            var expected = new int[] { 1, 1, 4, 2, 1, 1, 0, 0 };
+
+            var results = temps.DailyTemperatures(input);
+
+            Assert.AreEqual(expected.Length, results.Length);
+            for (int i = 0; i < expected.Length; i++)
+                Assert.AreEqual(expected[i], results[i]);
+        }
+
+        [TestMethod]
+        public void DailyTemps_SingleDay()
+        {
+            var temps = new Solution();
+            var results1 = temps.DailyTemperatures(new int[] { 50 });
+
+            Assert.AreEqual(1, results1.Length);
+            Assert.AreEqual(0, results1[0]);
+        }
+
+        [TestMethod]
+        public void CloneUndirectedGraphTests()
+        {
+            var root = new UndirectedGraphNode(1);
+            var node2 = new UndirectedGraphNode(2);
+            root.neighbors.Add(node2);
+            node2.neighbors.Add(root);
+            var node3 = new UndirectedGraphNode(3);
+            root.neighbors.Add(node3);
+            node2.neighbors.Add(node3);
+            node3.neighbors.Add(root);
+            node3.neighbors.Add(node2);
+            node3.neighbors.Add(node3);
+
+            var clone = root.CloneGraph(root);
+
+            Assert.IsNotNull(clone);
+            Assert.AreEqual(2, clone.neighbors.Count);
+        }
+
+        [TestMethod]
+        public void RPNTests()
+        {
+            var rpn = new Solution();
+            var result = rpn.EvalRPN(new string[] { "2", "1", "+", "3", "*" });
+            Assert.AreEqual(9, result);
+        }
+
+        [TestMethod]
+        public void TargetSums()
+        {
+            var rpn = new Solution();
+            var result = rpn.FindTargetSumWays(new int[] { 6, 2, 2, 4, 4 }, 6);
+            Assert.AreEqual(5, result);
+        }
+
+        [TestMethod]
 
         public char[,] GetGrid(string[] strings)
         {

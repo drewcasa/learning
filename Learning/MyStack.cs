@@ -45,6 +45,7 @@ namespace Learning
         {
             return _currMin;
         }
-    }
 
+    }
+    
 }

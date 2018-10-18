@@ -131,5 +131,138 @@ namespace Learning
             }
         }
 
+        public int[] DailyTemperatures(int[] temperatures)
+        {
+            var stack = new Stack<int>(); // track indexes of days that we haven't found higher temp for yet
+            var waitTimes = new int[temperatures.Length];
+
+            stack.Push(0); // first day
+
+            for (int today = 1; today < temperatures.Length; today++)
+            {
+                while (stack.Count > 0 && temperatures[today] > temperatures[stack.Peek()])
+                {
+                    // pop previous temp and set waitTime
+                    int prevDay = stack.Pop();
+                    waitTimes[prevDay] = today - prevDay;
+                }
+                stack.Push(today);
+            }
+
+            // array values init to 0, no need to clean up remaining days
+
+            return waitTimes;
+        }
+
+        public int EvalRPN(string[] tokens)
+        {
+            var parser = new Stack<int>();
+            int val;
+
+            foreach (var token in tokens)
+            {
+                if (int.TryParse(token, out val)) // maybe tryparse is faster?
+                {
+                    parser.Push(val);
+                }
+                else if (token == "*")
+                {
+                    parser.Push(parser.Pop() * parser.Pop());
+                }
+                else if (token == "+")
+                {
+                    parser.Push(parser.Pop() + parser.Pop());
+                }
+                else if (token == "-")
+                {
+                    int arg2 = parser.Pop();
+                    parser.Push(parser.Pop() - arg2);
+                }
+                else // if (token == "/")
+                {
+                    int arg2 = parser.Pop();
+                    parser.Push(parser.Pop() / arg2);
+                }
+            }
+            return parser.Peek();
+        }
+
+        public int FindTargetSumWaysWORecursion(int[] nums, int S)
+        {
+            // dfs through the numbers altering between + and -
+            var s = new Stack<int>(); // tracks current sum
+
+            // track the +/- operations for each position
+            var ops = new bool[nums.Length];
+            var count = Math.Pow(2, nums.Length);
+            s.Push(0);
+
+            int startIndex = 0;
+
+            while (true)
+            {
+                for (int i = startIndex; i < nums.Length; i++)
+                {
+                    // add if true, subtract otherwise
+                    if (ops[i])
+                    {
+                        s.Push(s.Peek() + nums[i]);
+                    }
+                    else
+                    {
+                        s.Push(s.Peek() - nums[i]);
+                    }
+                }
+
+                // if matched
+                if (s.Peek() == S)
+                {
+                    for (int i = 0; i < nums.Length; i++)
+                        Console.Write(string.Format("{0} {1}", ops[i] ? "+" : "-", nums[i]));
+
+                }
+
+                // increment our ops
+
+            }
+
+        }
+
+        public int FindTargetSumWays(int[] nums, int S)
+        {
+            // sort inputs ascending
+            Array.Sort(nums);
+
+            // set up some upper limits
+            int max = 0;
+            var maxSums = new int[nums.Length];
+            for (int i = nums.Length - 1; i >= 0; i--)
+            {
+                max += nums[i];
+                maxSums[i] = max;
+            }
+
+            return FindTargetSumWays(nums, 0, S, maxSums);
+        }
+
+        private int FindTargetSumWays(int[] nums, int currIndex, int target, int[] maxSums)
+        {
+            // base case - target becomes 0
+            if (currIndex == nums.Length - 1)
+            {
+                int numWays = 0;
+                if (target + nums[currIndex] == 0)
+                    numWays++;
+                if (target - nums[currIndex] == 0)
+                    numWays++;
+                return numWays;
+            }
+
+            // if remaining elements sum to less than remaining target, no need to check negative case
+            if (target > maxSums[currIndex] || (-1 * target) > maxSums[currIndex]) return 0;
+
+            return FindTargetSumWays(nums, currIndex + 1, target + nums[currIndex], maxSums)
+                 + FindTargetSumWays(nums, currIndex + 1, target - nums[currIndex], maxSums);
+        }
     }
 }
