@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Learning
+namespace Learning.Graphs
 {
     public class TopologicalSort
     {
@@ -40,20 +40,21 @@ namespace Learning
 
         public static List<string> DepthFirstSort(Dictionary<string, HashSet<string>> map)
         {
-            return DepthFirstSort(GraphNode.BuildGraph(map));
+            var graph = new Graph<string>(map);
+            return DepthFirstSort(graph);
         }
 
-        public static List<string> DepthFirstSort(Dictionary<string, GraphNode> graph)
+        public static List<T> DepthFirstSort<T>(Graph<T> graph)
         {
-            var sorted = new List<string>();
+            var sorted = new List<T>();
 
-            foreach (var node in graph.Values)
+            foreach (var node in graph.Nodes.Values)
                 Visit(node, sorted);
 
             return sorted;
         }
 
-        private static void Visit(GraphNode node, List<string> sorted)
+        private static void Visit<T>(GraphNode<T> node, List<T> sorted)
         {
             node.IsVisited = true;
 
@@ -65,71 +66,89 @@ namespace Learning
             }
 
             node.IsSorted = true;
-            sorted.Add(node.Key);
+            sorted.Add(node.Value);
         }
 
     }
 
-    public class GraphNode
+    public class GraphNode<T>
     {
-        public string Key;
+        public T Value;
         public bool IsVisited;
         public bool IsSorted;
-        public List<GraphNode> Dependencies;
-        public IEnumerable<string> _depKeys;
+        public List<GraphNode<T>> Dependencies;
+        public IEnumerable<T> _depKeys;
 
-        public GraphNode(string key, IEnumerable<string> depKeys)
+        public GraphNode(T key, IEnumerable<T> depKeys)
         {
-            Key = key;
+            Value = key;
             IsVisited = false;
             IsSorted = false;
-            Dependencies = new List<GraphNode>();
+            Dependencies = new List<GraphNode<T>>();
             _depKeys = depKeys;
         }
 
-        public GraphNode(string key)
+        public GraphNode(T key)
         {
-            Key = key;
+            Value = key;
             IsVisited = false;
             IsSorted = false;
-            Dependencies = new List<GraphNode>();
+            Dependencies = new List<GraphNode<T>>();
         }
 
-        public void FillDependencies(Dictionary<string, GraphNode> graph)
+        public void FillDependencies(Dictionary<T, GraphNode<T>> graph)
         {
             foreach (var key in _depKeys)
                 Dependencies.Add(graph[key]);
         }
 
-        public static Dictionary<string, GraphNode> BuildGraph(Dictionary<string, HashSet<string>> map)
+    }
+
+    public class Graph<T>
+    {
+        public Dictionary<T, GraphNode<T>> Nodes;
+
+        private Graph()
         {
-            var graph = new Dictionary<string, GraphNode>();
-
-            foreach (var kvp in map)
-                graph[kvp.Key] = new GraphNode(kvp.Key, kvp.Value);
-            foreach (var node in graph.Values)
-                node.FillDependencies(graph);
-
-            return graph;
+            Nodes = new Dictionary<T, GraphNode<T>>();
         }
 
-        public static Dictionary<string, GraphNode> BuildGraphFaster(Dictionary<string, HashSet<string>> map)
+        public Graph(Dictionary<T, HashSet<T>> map, bool isFaster)
         {
-            var graph = new Dictionary<string, GraphNode>();
-
             foreach (var kvp in map)
-                graph[kvp.Key] = new GraphNode(kvp.Key);
+                Nodes[kvp.Key] = new GraphNode<T>(kvp.Key);
             foreach (var kvp in map)
             {
-                var node = graph[kvp.Key];
+                var node = Nodes[kvp.Key];
                 foreach (var depKey in kvp.Value)
-                    node.Dependencies.Add(graph[depKey]);
+                    node.Dependencies.Add(Nodes[depKey]);
             }
+        }
 
-            return graph;
+        public Graph(Dictionary<T, HashSet<T>> map)
+        {
+            foreach (var kvp in map)
+                Nodes[kvp.Key] = new GraphNode<T>(kvp.Key, kvp.Value);
+            foreach (var node in Nodes.Values)
+                node.FillDependencies(Nodes);
+        }
+
+        public Graph(IEnumerable<Tuple<T, T>> pairs)
+        {
+            foreach (var pair in pairs)
+            {
+                var curr = GetNode(pair.Item1);
+                curr.Dependencies.Add(GetNode(pair.Item2));
+            }
+        }
+
+        public GraphNode<T> GetNode(T value)
+        {
+            if (!Nodes.ContainsKey(value))
+                Nodes[value] = new GraphNode<T>(value);
+            return Nodes[value];
         }
 
     }
-
 
 }

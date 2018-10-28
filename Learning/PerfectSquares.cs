@@ -47,7 +47,7 @@ namespace Learning
         {
             // get candidates squares from max -> 4, assuming larger values will find match quicker
             var sq = new List<int>();
-            for (int i = (int)Math.Sqrt(max); i > 1; i--)
+            for (int i = (int)System.Math.Sqrt(max); i > 1; i--)
                 sq.Add(i * i);
             return sq;
         }

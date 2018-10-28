@@ -1,3 +1,4 @@
+using Learning.Graphs;
 using Learning.QueuesAndStacks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -64,18 +65,18 @@ namespace Learning
         [TestMethod]
         public void BuildGraph_Compare()
         {
-            int capacity = 2;
+            int capacity = 1024;
 
-            for (int i = 0; i < 13; i++)
+            for (int i = 0; i < 4; i++)
             {
                 var map = BuildDependencies(capacity, 50);
                 var start = DateTime.Now;
-                GraphNode.BuildGraph(map);
+                var graph = new Graph<string>(map);
                 var totalMS = DateTime.Now.Subtract(start).TotalMilliseconds;
                 Console.WriteLine($"{totalMS}ms to build graph with {capacity} objects.");
 
                 start = DateTime.Now;
-                GraphNode.BuildGraphFaster(map);
+                graph = new Graph<string>(map, true);
                 totalMS = DateTime.Now.Subtract(start).TotalMilliseconds;
                 Console.WriteLine($"{totalMS}ms to build graph faster with {capacity} objects.");
 
@@ -367,19 +368,33 @@ namespace Learning
         {
             var root = new UndirectedGraphNode(1);
             var node2 = new UndirectedGraphNode(2);
+
             root.neighbors.Add(node2);
             node2.neighbors.Add(root);
+
             var node3 = new UndirectedGraphNode(3);
+
             root.neighbors.Add(node3);
-            node2.neighbors.Add(node3);
             node3.neighbors.Add(root);
+
+            node2.neighbors.Add(node3);
             node3.neighbors.Add(node2);
+
             node3.neighbors.Add(node3);
 
             var clone = root.CloneGraph(root);
 
             Assert.IsNotNull(clone);
             Assert.AreEqual(2, clone.neighbors.Count);
+        }
+
+        [TestMethod]
+        public void TestBitManipulation()
+        {
+            for (int i = 0; i < 12; i++)
+            {
+                Console.WriteLine(1 << i);
+            }
         }
 
         [TestMethod]

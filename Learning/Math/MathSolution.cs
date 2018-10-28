@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Learning.MathQuestions
+namespace Learning.Math
 {
     public class MathSolution
     {
@@ -72,7 +72,7 @@ namespace Learning.MathQuestions
                 for (int j = 5; j * i < n; j += 2) notPrime[j * i] = true;
                 for (int j = 5; j * i2 < n; j += 2) notPrime[j * i2] = true;
             }
-            
+
             return count;
         }
 
@@ -118,13 +118,71 @@ namespace Learning.MathQuestions
             // to optimize, only consider odd #s
 
             // only check existing primes as divisors, anything non-prime has a smaller multiple that was already checked
-            int sqrt = (int)Math.Sqrt(n);
+            int sqrt = (int)System.Math.Sqrt(n);
             for (int i = 2; i < primes.Count && primes[i] <= sqrt; i++)
                 if (n % primes[i] == 0) return;
 
             primes.Add(n);
         }
 
+        public bool IsPowerOfThree(int n)
+        {
+            if (n < 1) return false;
+            while (n % 9 == 0)
+                n /= 9;
+
+            return n == 1 || n == 3;
+        }
+
+        /*
+         * Symbol       Value
+            I             1
+            V             5
+            X             10
+            L             50
+            C             100
+            D             500
+            M             1000
+        */
+        public int RomanToInt(string s)
+        {
+            // create map with values
+            var map = new Dictionary<char, int>();
+            map.Add('I', 1);
+            map.Add('V', 5);
+            map.Add('X', 10);
+            map.Add('L', 50);
+            map.Add('C', 100);
+            map.Add('D', 500);
+            map.Add('M', 1000);
+
+            int sum = map[s[s.Length - 1]];
+
+            for (int i = 0; i < s.Length - 1; i++)
+            {
+                // if next value is higher, subtract this one
+                if (map[s[i]] < map[s[i + 1]])
+                    sum -= map[s[i]];
+                else
+                    sum += map[s[i]];
+            }
+
+            return sum;
+        }
+
+        public int HammingWeight(uint n)
+        {
+            // return num of 1's
+            int weight = 0;
+
+            while (n > 0)
+            {
+                if (n % 2 == 1) weight++;
+                n /= 2;
+            }
+
+            return weight;
+        }
 
     }
 }

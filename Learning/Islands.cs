@@ -194,7 +194,7 @@ namespace Learning
 
             // track the +/- operations for each position
             var ops = new bool[nums.Length];
-            var count = Math.Pow(2, nums.Length);
+            var count = System.Math.Pow(2, nums.Length);
             s.Push(0);
 
             int startIndex = 0;

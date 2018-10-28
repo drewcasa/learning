@@ -139,5 +139,74 @@ namespace Learning.Arrays
             return intersect.ToArray();
         }
 
+        public bool IsValidSudoku(char[,] board)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                if (!IsRowValid(board, i)) return false;
+                if (!IsColValid(board, i)) return false;
+                if (!IsBoxValid(board, i)) return false;
+            }
+
+            return true;
+        }
+
+        private bool IsRowValid(char[,] board, int rowNum)
+        {
+            int numMask = 0;
+            for (int colNum = 0; colNum < 9; colNum++)
+            {
+                int val = MapDigitToBit(board[rowNum, colNum]);
+                if ((val > 0) && ((val & numMask) == val)) return false;
+                numMask |= val;
+            }
+            return true;
+        }
+
+        private bool IsColValid(char[,] board, int colNum)
+        {
+            int numMask = 0;
+            for (int rowNum = 0; rowNum < 9; rowNum++)
+            {
+                int val = MapDigitToBit(board[rowNum, colNum]);
+                if ((val > 0) && ((val & numMask) == val)) return false;
+                numMask |= val;
+            }
+            return true;
+        }
+
+        private bool IsBoxValid(char[,] board, int boxNum)
+        {
+            int numMask = 0;
+            int rowOffset = (boxNum / 3) * 3;
+            int colOffset = (boxNum % 3) * 3;
+
+            for (int rowNum = rowOffset; rowNum < rowOffset + 3; rowNum++)
+                for (int colNum = colOffset; colNum < colOffset + 3; colNum++)
+                {
+                    int val = MapDigitToBit(board[rowNum, colNum]);
+                    if ((val > 0) && ((val & numMask) == val)) return false;
+                    numMask |= val;
+                }
+            return true;
+        }
+
+        private int MapDigitToBit(char c)
+        {
+            switch (c)
+            {
+                case '1': return 1;
+                case '2': return 2;
+                case '3': return 4;
+                case '4': return 8;
+                case '5': return 16;
+                case '6': return 32;
+                case '7': return 64;
+                case '8': return 128;
+                case '9': return 256;
+                default: return 0;
+            }
+        }
+
     }
 }
