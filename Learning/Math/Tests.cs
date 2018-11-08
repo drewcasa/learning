@@ -101,6 +101,14 @@ namespace Learning.Math
             Assert.AreEqual(2, ones.HammingWeight(9));
         }
 
+        [TestMethod]
+        public void ReverseDigitsTest()
+        {
+            var sln = new MathSolution();
+            Assert.AreEqual(123, sln.Reverse(321));
+            Assert.AreEqual(-1123, sln.Reverse(-3211));
+            Assert.AreEqual(0, sln.Reverse(int.MaxValue));
+        }
     }
 
 }

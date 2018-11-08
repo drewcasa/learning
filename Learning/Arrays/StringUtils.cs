@@ -58,7 +58,7 @@ namespace Learning.Arrays
             // take char from s, append to prefix, recurse
             for (int i = 0; i < remaining.Length; i++)
             {
-                var trimmed = remaining.Substring(0, i) + remaining.Substring(i+1);
+                var trimmed = remaining.Substring(0, i) + remaining.Substring(i + 1);
                 GetPermutations(prefix + remaining[i], trimmed, results);
             }
         }
@@ -96,5 +96,38 @@ namespace Learning.Arrays
             values[i2] = temp;
         }
 
+        /// <summary>
+        /// Given a string, find the length of the longest substring without repeating characters.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static int LengthOfLongestSubstring(string s)
+        {
+            // use set to track chars
+            // use a head and tail pointer to go through. advance head until dupe found
+            // if dupe, remove tail from set and advance until remove dupe
+            // track max length as going
+
+            int max = 0;
+            int tail = 0, head = 0;
+            var seen = new HashSet<char>();
+
+            // maybe can short-circuit earlier if max exceeds remaining possible max
+            while (head < s.Length)
+            {
+                // if char exists, advance tail up until it's gone
+                while (seen.Contains(s[head]))
+                {
+                    seen.Remove(s[tail]);
+                    tail++;
+                }
+
+                seen.Add(s[head]);
+                head++;
+                if (head - tail > max) max = head - tail;
+            }
+
+            return max;
+        }
     }
 }

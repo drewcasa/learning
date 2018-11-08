@@ -67,8 +67,10 @@ namespace Learning.Math
             // visit each int, marking each multiple as not prime
             for (int i = 13, i2 = 17; i < n; i += 6, i2 += 6)
             {
-                if (!notPrime[i]) count++;
+                if (!notPrime[i]) count++;  
                 if (!notPrime[i2] && i2 < n) count++;
+
+                // start at 5 b/c 2,3,4 already ignored by loop
                 for (int j = 5; j * i < n; j += 2) notPrime[j * i] = true;
                 for (int j = 5; j * i2 < n; j += 2) notPrime[j * i2] = true;
             }
@@ -182,6 +184,114 @@ namespace Learning.Math
             }
 
             return weight;
+        }
+
+        /// <summary>
+        /// Given a 32-bit signed integer, reverse digits of an integer.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public int Reverse(int x)
+        {
+            // add digits to result 
+            bool isNeg = x < 0;
+
+            // pop back into result, checking overflow
+            long result = 0;
+            while (x != 0)
+            {
+                int digit = x % 10;
+                x /= 10; // shift right a digit
+                result = result * 10 + digit; // shift left a digit and add next digit
+                if (isNeg && result < int.MinValue) return 0;
+                if (!isNeg && result > int.MaxValue) return 0;
+            }
+
+            // return 
+            return (int)result;
+        }
+
+        /// <summary>
+        /// Find median of two sorted arrays of differing lengths.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public double FindMedian(int[] a, int[] b)
+        {
+            if (a.Length > b.Length)
+                return FindMedianDiffLength(a, b);
+            else
+                return FindMedianDiffLength(b, a);
+        }
+
+        private double FindMedianDiffLength(int[] l, int[] s)
+        {
+            // get total and left half size
+            int total = l.Length + s.Length;
+            int leftCount = (total + 1) / 2; // includes median if odd
+
+            // shorter array index (points to element not in left side)
+            int si = s.Length / 2;
+
+            // longer array index
+            int li = leftCount - (si + 2);
+
+            // diff will track how far we move the indices
+            int diff = leftCount / 2;
+
+            do
+            {
+                if (IsSmallerHeavy(l, s, li, si))
+                {
+                    // cap at si, so we check the first element (this is one-time)
+                    if (diff > si && si > 0)
+                    {
+                        li += si;
+                        si = 0;
+                    }
+                    else
+                    {
+                        li += diff;
+                        si -= diff;
+                    }
+                }
+                else if (IsLargerHeavy(l, s, li, si))
+                {
+                    li -= diff;
+                    si += diff;
+                }
+                else
+                {
+                    break;
+                }
+
+                diff /= 2;
+            } while (true);
+
+            // now that si, li are set, determine median
+            int m1 = l[li];
+            int m2 = si < 0 || si >= s.Length ? l[li + 1] : s[si];
+            if (total % 2 == 1)
+                return System.Math.Max(m1, m2);
+            else
+                return 0.0;
+        }
+
+        private bool IsSmallerHeavy(int[] l, int[] s, int li, int si)
+        {
+            if (si < 0) return false; // s is ignored rn
+            // if smaller array's current element is larger than larger array's next, it's too heavy
+            return (s[si] > l[li + 1]);
+        }
+
+        private bool IsLargerHeavy(int[] l, int[] s, int li, int si)
+        {
+            if (si < 0) return false; // s is ignored rn
+
+            // if smaller array has element larger than it should, return true
+            if (si == -1) return false;
+            return (l[li] > s[si + 1]);
         }
 
     }

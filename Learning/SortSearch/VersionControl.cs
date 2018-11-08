@@ -17,10 +17,6 @@ namespace Learning.SortSearch
             return version >= FirstBad;
         }
 
-    }
-
-    public class Solution : VersionControl
-    {
         public int FirstBadVersion(int n)
         {
             // binary search is fastest
@@ -45,24 +41,6 @@ namespace Learning.SortSearch
             return bad;
         }
 
-
-        public void Merge(int[] nums1, int m, int[] nums2, int n)
-        {
-            // fill at the end of nums1 and work backwards, taking the large element from the end of each array
-            int curr = nums1.Length - 1;
-            m--;
-            n--;
-
-            // while there are elements in nums2, we have to merge.
-            while(n >= 0)
-            {
-                // if no elements left to merge in nums1 or 
-                if (m < 0 || nums1[m] < nums2[n])
-                    nums1[curr--] = nums2[n--];
-                else
-                    nums1[curr--] = nums1[m--];
-            }
-        }
 
     }
 

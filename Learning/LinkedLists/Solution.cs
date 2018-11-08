@@ -6,18 +6,40 @@ namespace Learning.LinkedLists
 {
     public class Solution
     {
-        public class ListNode
+        public abstract class Node<TVal, TNode>
         {
-            public int val;
-            public ListNode next;
-            public ListNode(int x) { val = x; }
+            public TNode next;
+            public TVal val;
+
+            public Node(TVal value)
+            {
+                val = value;
+            }
+        }
+
+        public class ListNode : Node<int, ListNode>
+        {
+            public ListNode(int value) : base(value)
+            { }
+        }
+
+        public class RandomListNode
+        {
+            public RandomListNode random;
+            public RandomListNode next;
+            public int label; // why aren't questions consistent?
+
+            public RandomListNode(int val)
+            {
+                label = val;
+            }
         }
 
         public ListNode GetIntersectionNodeBruteForce(ListNode headA, ListNode headB)
         {
             var set = new HashSet<ListNode>();
             var curr = headA;
-            while(curr != null)
+            while (curr != null)
             {
                 set.Add(curr);
                 curr = curr.next;
@@ -30,7 +52,7 @@ namespace Learning.LinkedLists
             }
             return null;
         }
-        
+
         public ListNode GetIntersectionNodeBetter(ListNode headA, ListNode headB)
         {
             if (headA is null || headB is null)
@@ -67,7 +89,7 @@ namespace Learning.LinkedLists
             }
             return len;
         }
-        
+
         public ListNode GetIntersectionNodeBest(ListNode headA, ListNode headB)
         {
             var runA = headA;
@@ -87,7 +109,7 @@ namespace Learning.LinkedLists
                 if (runB is null) runB = headA;
             }
 
-            return runB; 
+            return runB;
         }
 
         public ListNode RemoveNthFromEnd(ListNode head, int n)
@@ -121,7 +143,7 @@ namespace Learning.LinkedLists
             // iterate through nodes, keeping pointer to prev, curr, next
             ListNode prev = null;
 
-            while(head != null)
+            while (head != null)
             {
                 var next = head.next; // next node
 
@@ -139,7 +161,7 @@ namespace Learning.LinkedLists
         public ListNode RemoveElements(ListNode head, int val)
         {
             // advance head if list starts with val
-            while(head != null && head.val == val)
+            while (head != null && head.val == val)
                 head = head.next;
 
             if (head is null) return head;
@@ -173,9 +195,9 @@ namespace Learning.LinkedLists
             var odd = head;
             var even = head.next;
             var nextOdd = odd.next.next; // stay 2-ahead
-            
+
             // move pointers in pairs
-            while(nextOdd != null)
+            while (nextOdd != null)
             {
                 odd.next = nextOdd;
                 even.next = nextOdd.next;
@@ -200,7 +222,7 @@ namespace Learning.LinkedLists
             // fast runner gets to end while slow is at middle node
             var fast = head;
             var slow = head;
-            while(fast?.next != null)
+            while (fast?.next != null)
             {
                 fast = fast.next.next;
                 slow = slow.next;
@@ -234,7 +256,7 @@ namespace Learning.LinkedLists
 
             // main points to our current node on combined list
             // spare points to "other" list
-            while(main.next != null && spare != null)
+            while (main.next != null && spare != null)
             {
                 var temp = main.next;
                 main.next = (main.next.val < spare.val) ? main.next : spare; // move forward to smaller value
@@ -253,12 +275,12 @@ namespace Learning.LinkedLists
             ListNode curr = head;
 
             // least-significant digits to most, don't assume same-length lists
-            while(l1 != null || l2 != null)
+            while (l1 != null || l2 != null || carry > 0)
             {
                 var node = AddNodes(l1, l2, ref carry);
                 curr.next = node;
                 curr = curr.next;
-                
+
                 // move pointers
                 l1 = l1?.next;
                 l2 = l2?.next;
@@ -273,6 +295,104 @@ namespace Learning.LinkedLists
             carry = digit / 10;
             return new ListNode(digit % 10);
         }
+
+        /// <summary>
+        /// Deep clone of list with random pointers
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public RandomListNode CopyRandomList(RandomListNode head)
+        {
+            // we'll store all clones here
+            var map = new Dictionary<int, RandomListNode>();
+
+            // cycle through list first pass doing shallow copy
+            var curr = head;
+            var beforeHead = new RandomListNode(-1);
+            var currCopy = beforeHead;
+            while (curr != null)
+            {
+                var clone = new RandomListNode(curr.label);
+                clone.random = curr.random;
+
+                // insert new node into list + map
+                map.Add(clone.label, clone);
+                currCopy.next = clone;
+
+                // advance pointers
+                currCopy = currCopy.next;
+                curr = curr.next;
+            }
+
+            // 2nd loop will fix references
+            currCopy = beforeHead.next;
+            while(currCopy != null)
+            {
+                if (currCopy.random != null)
+                    currCopy.random = map[currCopy.random.label];
+                currCopy = currCopy.next;
+            }
+
+            // return cloned head
+            return beforeHead.next;
+        }
+
+        /// <summary>
+        /// Deep clone of list with random pointers
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public RandomListNode CopyRandomListRecursion(RandomListNode head)
+        {
+            var map = new Dictionary<int, RandomListNode>();
+            return CloneNode(head, map, true);
+        }
+
+        private RandomListNode CloneNode(RandomListNode node, Dictionary<int, RandomListNode> map, bool deepCopy)
+        {
+            if (node is null) return null;
+            if (!map.ContainsKey(node.label))
+                map.Add(node.label, new RandomListNode(node.label));
+
+            RandomListNode clone = map[node.label];
+            if (deepCopy)
+            {
+                clone.next = CloneNode(node.next, map, true);
+                clone.random = CloneNode(node.random, map, false);
+            }
+
+            return clone;
+        }
+
+        public ListNode RotateRight(ListNode head, int k)
+        {
+            if (head is null) return head;
+
+            // fast-forward to tail (get length at same time)
+            var curr = head;
+            int len = 1;
+            while(curr.next != null)
+            {
+                curr = curr.next;
+                len++;
+            }
+
+            // attach tail to head
+            var tail = curr;
+            tail.next = head;
+
+            // advance to K-th node rotates left
+            int rSteps = len - (k % len);
+            for (int i = 0; i < rSteps; i++)
+                curr = curr.next;
+
+            // break cycle and return new head
+            head = curr.next;
+            curr.next = null;
+            return head;
+        }
+        
+
 
     }
 }

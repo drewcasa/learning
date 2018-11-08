@@ -50,7 +50,7 @@ namespace Learning
         {
             int capacity = 2;
 
-            for (int i = 0; i < 13; i++)
+            for (int i = 0; i < 12; i++)
             {
                 var map = BuildDependencies(capacity, 50);
                 var start = DateTime.Now;

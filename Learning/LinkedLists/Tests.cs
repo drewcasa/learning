@@ -216,6 +216,48 @@ namespace Learning.LinkedLists
 
             result = sln.AddTwoNumbers(BuildList(), BuildList());
             AssertList(result);
+
+            result = sln.AddTwoNumbers(BuildList(5), BuildList(5));
+            AssertList(result, 0, 1);
+        }
+
+        [TestMethod]
+        public void TestRandomClone()
+        {
+            var sln = new Solution();
+
+            var input = BuildRandomList(1, 2, 3, 4);
+            input.random = input.next.next;
+            input.next.random = input;
+            input.next.next.random = input;
+
+            var result = sln.CopyRandomListRecursion(input);
+            AssertList(result, 1,2,3,4);
+            Assert.AreNotSame(input, result);
+            Assert.AreNotSame(input.random, result.random);
+            Assert.AreEqual(input.random.label, result.random.label);
+        }
+
+        [TestMethod]
+        public void RotateTests()
+        {
+            var sln = new Solution();
+
+            var input = BuildList(1, 2, 3, 4);
+            var result = sln.RotateRight(input, 2);
+            AssertList(result, 3, 4, 1, 2);
+
+            result = sln.RotateRight(BuildList(2, 3), 2);
+            AssertList(result, 2, 3);
+
+            result = sln.RotateRight(BuildList(2, 3), 12);
+            AssertList(result, 2, 3);
+
+            result = sln.RotateRight(BuildList(), 1);
+            AssertList(result);
+
+            result = sln.RotateRight(BuildList(1,2,3,4,5), 17);
+            AssertList(result, 4,5,1,2,3);
         }
 
         private ListNode BuildList(params int[] nums)
@@ -232,11 +274,35 @@ namespace Learning.LinkedLists
             return head;
         }
 
+        private RandomListNode BuildRandomList(params int[] nums)
+        {
+            if (nums == null || nums.Length == 0) return null;
+
+            var head = new RandomListNode(nums[0]);
+            var curr = head;
+            for (int i = 1; i < nums.Length; i++)
+            {
+                curr.next = new RandomListNode(nums[i]);
+                curr = curr.next;
+            }
+            return head;
+        }
+
         private void AssertList(ListNode head, params int[] nums)
         {
             for (int i = 0; i < nums.Length; i++)
             {
                 Assert.AreEqual(nums[i], head.val);
+                head = head.next;
+            }
+            Assert.IsNull(head);
+        }
+
+        private void AssertList(RandomListNode head, params int[] nums)
+        {
+            for (int i = 0; i < nums.Length; i++)
+            {
+                Assert.AreEqual(nums[i], head.label);
                 head = head.next;
             }
             Assert.IsNull(head);

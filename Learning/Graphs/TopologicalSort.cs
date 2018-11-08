@@ -106,12 +106,8 @@ namespace Learning.Graphs
 
     public class Graph<T>
     {
-        public Dictionary<T, GraphNode<T>> Nodes;
+        public Dictionary<T, GraphNode<T>> Nodes = new Dictionary<T, GraphNode<T>>();
 
-        private Graph()
-        {
-            Nodes = new Dictionary<T, GraphNode<T>>();
-        }
 
         public Graph(Dictionary<T, HashSet<T>> map, bool isFaster)
         {
@@ -125,7 +121,7 @@ namespace Learning.Graphs
             }
         }
 
-        public Graph(Dictionary<T, HashSet<T>> map)
+        public Graph(Dictionary<T, HashSet<T>> map) 
         {
             foreach (var kvp in map)
                 Nodes[kvp.Key] = new GraphNode<T>(kvp.Key, kvp.Value);

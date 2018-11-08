@@ -63,6 +63,42 @@ namespace Learning.QueuesAndStacks
             Assert.AreEqual("aaabFFFFcbFFFFc", decoder.DecodeString("3[a]2[b4[F]c]"));
         }
         
+        [TestMethod]
+        public void TestValidExpression()
+        {
+            var sln = new Solution();
+
+            Assert.IsFalse(sln.IsValidExpression("[]]"));
+            Assert.IsFalse(sln.IsValidExpression("]"));
+            Assert.IsFalse(sln.IsValidExpression("][]"));
+            Assert.IsFalse(sln.IsValidExpression("[(())"));
+
+
+            Assert.IsTrue(sln.IsValidExpression(""));
+            Assert.IsTrue(sln.IsValidExpression("[[]]"));
+            Assert.IsTrue(sln.IsValidExpression("[[]()]"));
+            Assert.IsTrue(sln.IsValidExpression("[[]]()()()()"));
+        }
+
+        [TestMethod]
+        public void TestValidTreeExpression()
+        {
+            var sln = new Solution();
+
+            Assert.IsFalse(sln.IsBinaryTreeExpression("[]]"));
+            Assert.IsFalse(sln.IsBinaryTreeExpression("]"));
+            Assert.IsFalse(sln.IsBinaryTreeExpression("][]"));
+            Assert.IsFalse(sln.IsBinaryTreeExpression("[(())"));
+            Assert.IsFalse(sln.IsBinaryTreeExpression("()()"));
+            Assert.IsFalse(sln.IsBinaryTreeExpression("[([])]"));
+
+            Assert.IsTrue(sln.IsBinaryTreeExpression(""));
+            Assert.IsTrue(sln.IsBinaryTreeExpression("()"));
+            Assert.IsTrue(sln.IsBinaryTreeExpression("([])"));
+            Assert.IsTrue(sln.IsBinaryTreeExpression("(()())"));
+            Assert.IsTrue(sln.IsBinaryTreeExpression("(([])())"));
+            Assert.IsTrue(sln.IsBinaryTreeExpression("([()()][])"));
+        }
 
     }
 }
